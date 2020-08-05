@@ -92,7 +92,6 @@ def main():
         #ids = get_rt_list()
 
         if ids :
-            since_id = ids[0]
             for tweet_id in ids:
                 media_url = get_image_url_by_id(tweet_id)
 
@@ -105,7 +104,8 @@ def main():
                         dl_image_from_url(media_url)
                         print("%s img save" %nameimg[-1])
                     else:
-                        print("%s img exist" %nameimg[-1]) #永久に呼び出し続けることになる...?それは困る 一週間前とかapiの限界とか取得可能?
+                        print("%s img exist" %nameimg[-1])
+                        sys.exit(0) #永久に呼び出し続けることになる...?それは困る 一週間前とかapiの限界とか取得可能?
 
         sleep(10)
 
