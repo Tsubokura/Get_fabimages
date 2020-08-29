@@ -3,7 +3,7 @@ from datetime import datetime
 from time import sleep
 
 import time
-import os.path
+import os
 import urllib.request
 import json
 import env
@@ -41,10 +41,10 @@ def get_image_url_by_id(id):
 
     return False
 
-def dl_image_from_url(urls):
+def dl_image_from_url(urls, dirname):
     for url in urls:
         name = url.split("/")
-        pathname = "/Users/sota/icloud/fav_images/" + name[-1]
+        pathname = "~/icloud/fav_images/" + dirname + "/" + name[-1]
         urllib.request.urlretrieve(url + ":large", pathname)
 
 def get_fav_list(maxid):
@@ -85,6 +85,11 @@ def get_rt_list():
 
 def main():
     old_id = None
+    imgnames = []
+    pathname = "~/icloud/fav_images/"
+    datetime_now = datetime.fromtimestamp(time.time())
+    dirname = datetime_now.strftime('%Y_%m_%d_%H_%M_%S')
+    os.mkdir(pathname + dirname)
 
     while True:
         ids = get_fav_list(old_id)
@@ -98,13 +103,18 @@ def main():
                 if not media_url:
                     continue
                 else:
-                    nameimg = media_url[0].split("/")
-                    pathname = "/Users/sota/icloud/fav_images/"
-                    if nameimg[-1] not in os.listdir(pathname):
-                        dl_image_from_url(media_url)
-                        print("%s img save" %nameimg[-1])
+                    imgname = media_url[0].split("/")
+                    root_dir = "~/icloud/fav_images/"
+
+                    for paths, dirs, files in os.walk(root_dir):
+                        imgnames.extend(files)
+
+                    if imgname[-1] not in imgnames:
+                        dl_image_from_url(media_url, dirname)
+                        print("%s img save" %imgname[-1])
                     else:
-                        print("%s img exist" %nameimg[-1])
+                        print("%s img exist" %imgname[-1])
+                        print("favimgs save process end")
                         sys.exit(0) #永久に呼び出し続けることになる...?それは困る 一週間前とかapiの限界とか取得可能?
 
         sleep(10)
